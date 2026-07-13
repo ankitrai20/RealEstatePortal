@@ -18,9 +18,13 @@ function PropertyCard({ property }) {
       <div className="relative">
 
         <img
-          src={`/images/${property.image}`}
+          src={property.image}
           alt={property.title}
           className="w-full h-64 object-cover"
+          onError={(e) => {
+            e.target.src =
+              "https://via.placeholder.com/600x400?text=No+Image";
+          }}
         />
 
         <button
@@ -35,37 +39,25 @@ function PropertyCard({ property }) {
       <div className="p-5">
 
         <h2 className="text-3xl font-bold">
-
           {property.title}
-
         </h2>
 
         <p className="text-gray-500 mt-2">
-
           📍 {property.location}
-
         </p>
 
         <h3 className="text-blue-600 text-4xl font-bold mt-4">
-
           ₹ {Number(property.price).toLocaleString("en-IN")}
-
         </h3>
 
         <p className="mt-4 text-gray-600">
-
           {property.description}
-
         </p>
 
         <Link to={`/property/${property.id}`}>
-
           <button className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-
             View Details
-
           </button>
-
         </Link>
 
       </div>

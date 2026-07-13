@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const pool = require("./config/db");
 const auth = require("./middleware/auth");
+const upload = require("./middleware/upload");
 
 const app = express();
 
@@ -123,9 +124,21 @@ app.get("/profile", auth, (req, res) => {
 });
 
 // ================= ADD PROPERTY =================
-app.post("/property", auth, async (req, res) => {
+app.post("/property", auth, upload.single("image"), async (req, res) => {
   try {
-    const { title, description, price, location, image } = req.body;
+
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    const { title, description, price, location } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Image is required",
+      });
+    }
+
+    const image = req.file.path;
 
     const result = await pool.query(
       `INSERT INTO properties
@@ -148,11 +161,13 @@ app.post("/property", auth, async (req, res) => {
     });
 
   } catch (err) {
+
     console.error(err);
 
     res.status(500).json({
       message: "Server Error",
     });
+
   }
 });
 
@@ -173,21 +188,97 @@ app.get("/properties", async (req, res) => {
     });
   }
 });
-
-// ================= UPDATE PROPERTY =================
-app.put("/property/:id", auth, async (req, res) => {
+// ================= MY PROPERTIES =================
+app.get("/my-properties", auth, async (req, res) => {
 
   try {
 
+    const result = await pool.query(
+      `SELECT *
+       FROM properties
+       WHERE owner_id = $1
+       ORDER BY id DESC`,
+      [req.user.id]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+
+});
+// ================= DASHBOARD STATS =================
+app.get("/dashboard-stats", auth, async (req, res) => {
+  try {
+
+    const properties = await pool.query(
+      `SELECT COUNT(*) AS total_properties,
+              COALESCE(SUM(price),0) AS total_value
+       FROM properties
+       WHERE owner_id=$1`,
+      [req.user.id]
+    );
+
+    const wishlist = await pool.query(
+      `SELECT COUNT(*) AS wishlist_count
+       FROM wishlist
+       WHERE user_id=$1`,
+      [req.user.id]
+    );
+
+    res.json({
+      totalProperties: Number(properties.rows[0].total_properties),
+      totalValue: Number(properties.rows[0].total_value),
+      wishlistCount: Number(wishlist.rows[0].wishlist_count),
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+});
+// ================= UPDATE PROPERTY =================
+// ================= UPDATE PROPERTY =================
+app.put("/property/:id", auth, upload.single("image"), async (req, res) => {
+  try {
     const { id } = req.params;
 
-    const {
-      title,
-      description,
-      price,
-      location,
-      image,
-    } = req.body;
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    const { title, description, price, location } = req.body;
+
+    // Property exist karti hai ya nahi
+    const oldProperty = await pool.query(
+      "SELECT * FROM properties WHERE id=$1",
+      [id]
+    );
+
+    if (oldProperty.rows.length === 0) {
+      return res.status(404).json({
+        message: "Property Not Found",
+      });
+    }
+
+    // Default old image
+    let image = oldProperty.rows[0].image;
+
+    // Agar new image upload hui hai
+    if (req.file) {
+      image = req.file.path;
+    }
 
     const result = await pool.query(
       `UPDATE properties
@@ -209,27 +300,18 @@ app.put("/property/:id", auth, async (req, res) => {
       ]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        message: "Property Not Found",
-      });
-    }
-
     res.json({
       message: "Property Updated Successfully",
       property: result.rows[0],
     });
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
       message: "Server Error",
     });
-
   }
-
 });
 // ================= DELETE PROPERTY =================
 app.delete("/property/:id", auth, async (req, res) => {

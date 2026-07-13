@@ -1,6 +1,9 @@
+import MortgageCalculator from "../../components/MortgageCalculator";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+
+import PropertyMap from "../../components/PropertyMap";
 
 function PropertyDetails() {
   const { id } = useParams();
@@ -27,6 +30,7 @@ function PropertyDetails() {
   }, [id]);
 
   // ================= DELETE PROPERTY =================
+
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this property?"
@@ -47,7 +51,6 @@ function PropertyDetails() {
       );
 
       alert("Property Deleted Successfully");
-
       navigate("/");
     } catch (err) {
       console.log(err);
@@ -78,94 +81,140 @@ function PropertyDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-5">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+
+      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        {/* Property Image */}
+
         <img
-          src={`/images/${property.image}`}
+          src={property.image}
           alt={property.title}
-          className="w-full h-[450px] object-cover"
+          className="w-full h-[500px] object-cover"
+          onError={(e) => {
+            e.target.src =
+              "https://via.placeholder.com/1200x600?text=No+Image";
+          }}
         />
 
         <div className="p-8">
+
+          {/* Title */}
+
           <h1 className="text-4xl font-bold">
             {property.title}
           </h1>
 
-          <p className="text-gray-600 text-xl mt-3">
+          <p className="text-xl text-gray-500 mt-3">
             📍 {property.location}
           </p>
 
-          <h2 className="text-3xl text-blue-600 font-bold mt-6">
+          <h2 className="text-blue-600 text-4xl font-bold mt-5">
             ₹ {Number(property.price).toLocaleString("en-IN")}
           </h2>
 
-          <div className="grid grid-cols-3 gap-6 mt-8">
-            <div className="bg-gray-100 rounded-lg p-5 text-center">
+          {/* Property Information */}
+
+          <div className="grid md:grid-cols-3 gap-6 mt-10">
+
+            <div className="bg-blue-50 rounded-xl p-6 text-center shadow">
+
               <h3 className="text-xl font-bold">
                 🛏 Bedrooms
               </h3>
 
-              <p className="mt-2">
+              <p className="mt-3 text-lg">
                 {property.bedrooms || "N/A"}
               </p>
+
             </div>
 
-            <div className="bg-gray-100 rounded-lg p-5 text-center">
+            <div className="bg-green-50 rounded-xl p-6 text-center shadow">
+
               <h3 className="text-xl font-bold">
                 🚿 Bathrooms
               </h3>
 
-              <p className="mt-2">
+              <p className="mt-3 text-lg">
                 {property.bathrooms || "N/A"}
               </p>
+
             </div>
 
-            <div className="bg-gray-100 rounded-lg p-5 text-center">
+            <div className="bg-yellow-50 rounded-xl p-6 text-center shadow">
+
               <h3 className="text-xl font-bold">
                 📐 Area
               </h3>
 
-              <p className="mt-2">
+              <p className="mt-3 text-lg">
                 {property.area || "N/A"}
               </p>
+
             </div>
+
           </div>
 
-          <h2 className="text-3xl font-bold mt-10">
+          {/* Description */}
+
+          <h2 className="text-3xl font-bold mt-12">
             Description
           </h2>
 
-          <p className="mt-4 text-gray-600 leading-8">
+          <p className="mt-5 text-gray-600 leading-8 text-lg">
             {property.description}
           </p>
 
-          <div className="flex gap-5 mt-10 flex-wrap">
+          {/* Map */}
 
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
-              Contact Agent
+          <h2 className="text-3xl font-bold mt-12 mb-6">
+            📍 Property Location
+          </h2>
+
+          <PropertyMap
+            title={property.title}
+            location={property.location}
+            price={property.price}
+          />
+
+          {/* Mortgage Calculator */}
+
+          <MortgageCalculator
+            propertyPrice={property.price}
+          />
+
+          {/* Buttons */}
+
+          <div className="flex flex-wrap gap-5 mt-12">
+
+            <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-8 py-3 rounded-xl shadow">
+              📞 Contact Agent
             </button>
 
             <Link to={`/edit-property/${property.id}`}>
-              <button className="bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600">
+              <button className="bg-yellow-500 hover:bg-yellow-600 transition text-white px-8 py-3 rounded-xl shadow">
                 ✏ Edit Property
               </button>
             </Link>
 
             <button
               onClick={handleDelete}
-              className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 transition text-white px-8 py-3 rounded-xl shadow"
             >
               🗑 Delete Property
             </button>
 
             <Link to="/">
-              <button className="bg-gray-700 text-white px-8 py-3 rounded-lg hover:bg-black">
+              <button className="bg-gray-800 hover:bg-black transition text-white px-8 py-3 rounded-xl shadow">
                 ← Back
               </button>
             </Link>
 
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }

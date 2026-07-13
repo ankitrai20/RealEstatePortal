@@ -10,65 +10,61 @@ function Navbar() {
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
-
     localStorage.removeItem("token");
-
     alert("Logout Successful!");
-
     navigate("/login");
-
   };
 
   return (
 
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-lg shadow-md">
 
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-5">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
 
         {/* Logo */}
 
         <Link
           to="/"
-          className="text-3xl font-bold text-blue-600"
+          className="text-3xl font-extrabold text-blue-600 tracking-wide"
         >
-          RealEstate
+          🏠 EstatePro
         </Link>
 
         {/* Navigation */}
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-7">
 
           <Link
             to="/"
-            className="hover:text-blue-600 font-medium"
+            className="font-medium hover:text-blue-600 transition"
           >
             Home
           </Link>
 
           <Link
             to="/buy"
-            className="hover:text-blue-600 font-medium"
+            className="font-medium hover:text-blue-600 transition"
           >
             Buy
           </Link>
 
           <Link
             to="/rent"
-            className="hover:text-blue-600 font-medium"
+            className="font-medium hover:text-blue-600 transition"
           >
             Rent
           </Link>
 
           <Link
             to="/sell"
-            className="hover:text-blue-600 font-medium"
+            className="font-medium hover:text-blue-600 transition"
           >
             Sell
           </Link>
 
           <Link
             to="/contact"
-            className="hover:text-blue-600 font-medium"
+            className="font-medium hover:text-blue-600 transition"
           >
             Contact
           </Link>
@@ -77,9 +73,9 @@ function Navbar() {
 
             <Link
               to="/add-property"
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-semibold transition shadow"
             >
-              Add Property
+              + Add Property
             </Link>
 
           )}
@@ -88,11 +84,11 @@ function Navbar() {
 
           <Link
             to="/wishlist"
-            className="relative text-3xl"
+            className="relative flex items-center gap-2 font-semibold hover:text-red-500 transition"
           >
-            🤍
+            ❤️ Wishlist
 
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+            <span className="absolute -top-3 -right-4 bg-red-500 text-white text-xs rounded-full px-2 py-1">
               {wishlist.length}
             </span>
 
@@ -102,7 +98,7 @@ function Navbar() {
 
             <Link
               to="/login"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl font-semibold transition"
             >
               Login
             </Link>
@@ -111,7 +107,7 @@ function Navbar() {
 
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-semibold transition"
             >
               Logout
             </button>
