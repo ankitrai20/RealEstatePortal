@@ -65,7 +65,6 @@ Upcoming Features
 - Admin Dashboard
 - Email Notifications
 
-Author
 
 Ankit Rai
 
