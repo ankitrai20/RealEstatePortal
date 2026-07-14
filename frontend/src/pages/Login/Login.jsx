@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
 
+const API = import.meta.env.VITE_API_URL;
+
 function Login() {
   const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/login", {
+      const response = await fetch(`${API}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +34,6 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-
         login(data.token, {
           id: data.user.id,
           name: data.user.name,
@@ -40,40 +41,27 @@ function Login() {
         });
 
         alert("Login Successful!");
-
         navigate("/");
-
       } else {
-
-        alert(data.message);
-
+        alert(data.message || "Login Failed");
       }
-
     } catch (error) {
-
       console.error(error);
-
       alert("Server Error");
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
-
         <h1>Welcome Back</h1>
 
         <p>Login to your Real Estate Account</p>
 
         <form onSubmit={handleLogin}>
-
           <div className="input-group">
-
             <label>Email</label>
 
             <input
@@ -83,11 +71,9 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-
           </div>
 
           <div className="input-group">
-
             <label>Password</label>
 
             <input
@@ -97,7 +83,6 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-
           </div>
 
           <button
@@ -107,19 +92,14 @@ function Login() {
           >
             {loading ? "Logging In..." : "Login"}
           </button>
-
         </form>
 
         <div className="bottom-text">
-
           Don't have an account?{" "}
-
           <Link to="/register">
             <span>Register</span>
           </Link>
-
         </div>
-
       </div>
     </div>
   );

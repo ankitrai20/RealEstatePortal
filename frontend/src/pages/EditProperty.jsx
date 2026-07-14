@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL;
+
 function EditProperty() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ function EditProperty() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/properties")
+    fetch(`${API}/properties`)
       .then((res) => res.json())
       .then((data) => {
         const property = data.find(
@@ -30,6 +32,9 @@ function EditProperty() {
           setLocation(property.location);
           setOldImage(property.image);
         }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, [id]);
 
@@ -50,12 +55,10 @@ function EditProperty() {
 
       if (image) {
         formData.append("image", image);
-      } else {
-        formData.append("image", oldImage);
       }
 
       const response = await fetch(
-        `http://localhost:5000/property/${id}`,
+        `${API}/property/${id}`,
         {
           method: "PUT",
           headers: {
@@ -71,7 +74,7 @@ function EditProperty() {
         alert("Property Updated Successfully");
         navigate(`/property/${id}`);
       } else {
-        alert(data.message);
+        alert(data.message || "Failed to update property");
       }
     } catch (err) {
       console.log(err);
@@ -83,12 +86,10 @@ function EditProperty() {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 py-10">
-
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-xl rounded-xl p-8 w-[500px]"
       >
-
         <h1 className="text-3xl font-bold text-center mb-6">
           Edit Property
         </h1>
@@ -148,9 +149,7 @@ function EditProperty() {
         >
           {loading ? "Updating..." : "Update Property"}
         </button>
-
       </form>
-
     </div>
   );
 }

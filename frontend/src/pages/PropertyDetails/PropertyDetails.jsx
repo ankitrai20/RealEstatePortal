@@ -5,6 +5,8 @@ import axios from "axios";
 
 import PropertyMap from "../../components/PropertyMap";
 
+const API = import.meta.env.VITE_API_URL;
+
 function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ function PropertyDetails() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/properties")
+      .get(`${API}/properties`)
       .then((res) => {
         const selectedProperty = res.data.find(
           (item) => item.id === Number(id)
@@ -41,14 +43,11 @@ function PropertyDetails() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(
-        `http://localhost:5000/property/${property.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${API}/property/${property.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       alert("Property Deleted Successfully");
       navigate("/");
@@ -81,10 +80,7 @@ function PropertyDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-5">
-
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-
-        {/* Property Image */}
 
         <img
           src={property.image}
@@ -98,8 +94,6 @@ function PropertyDetails() {
 
         <div className="p-8">
 
-          {/* Title */}
-
           <h1 className="text-4xl font-bold">
             {property.title}
           </h1>
@@ -112,49 +106,30 @@ function PropertyDetails() {
             ₹ {Number(property.price).toLocaleString("en-IN")}
           </h2>
 
-          {/* Property Information */}
-
           <div className="grid md:grid-cols-3 gap-6 mt-10">
 
             <div className="bg-blue-50 rounded-xl p-6 text-center shadow">
-
-              <h3 className="text-xl font-bold">
-                🛏 Bedrooms
-              </h3>
-
+              <h3 className="text-xl font-bold">🛏 Bedrooms</h3>
               <p className="mt-3 text-lg">
                 {property.bedrooms || "N/A"}
               </p>
-
             </div>
 
             <div className="bg-green-50 rounded-xl p-6 text-center shadow">
-
-              <h3 className="text-xl font-bold">
-                🚿 Bathrooms
-              </h3>
-
+              <h3 className="text-xl font-bold">🚿 Bathrooms</h3>
               <p className="mt-3 text-lg">
                 {property.bathrooms || "N/A"}
               </p>
-
             </div>
 
             <div className="bg-yellow-50 rounded-xl p-6 text-center shadow">
-
-              <h3 className="text-xl font-bold">
-                📐 Area
-              </h3>
-
+              <h3 className="text-xl font-bold">📐 Area</h3>
               <p className="mt-3 text-lg">
                 {property.area || "N/A"}
               </p>
-
             </div>
 
           </div>
-
-          {/* Description */}
 
           <h2 className="text-3xl font-bold mt-12">
             Description
@@ -163,8 +138,6 @@ function PropertyDetails() {
           <p className="mt-5 text-gray-600 leading-8 text-lg">
             {property.description}
           </p>
-
-          {/* Map */}
 
           <h2 className="text-3xl font-bold mt-12 mb-6">
             📍 Property Location
@@ -176,13 +149,9 @@ function PropertyDetails() {
             price={property.price}
           />
 
-          {/* Mortgage Calculator */}
-
           <MortgageCalculator
             propertyPrice={property.price}
           />
-
-          {/* Buttons */}
 
           <div className="flex flex-wrap gap-5 mt-12">
 
@@ -214,7 +183,6 @@ function PropertyDetails() {
         </div>
 
       </div>
-
     </div>
   );
 }

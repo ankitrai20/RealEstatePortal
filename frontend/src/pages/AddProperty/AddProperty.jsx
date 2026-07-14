@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AddProperty.css";
 
+const API = import.meta.env.VITE_API_URL;
+
 function AddProperty() {
   const navigate = useNavigate();
 
@@ -40,16 +42,13 @@ function AddProperty() {
       formData.append("location", location);
       formData.append("image", image);
 
-      const response = await fetch(
-        "http://localhost:5000/property",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`${API}/property`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       const data = await response.json();
 
@@ -70,13 +69,11 @@ function AddProperty() {
   return (
     <div className="add-container">
       <div className="add-card">
-
         <h1>Add Property</h1>
 
         <p>Fill all property details</p>
 
         <form onSubmit={handleSubmit}>
-
           <div className="input-group">
             <label>Title</label>
 
@@ -137,9 +134,7 @@ function AddProperty() {
           >
             {loading ? "Uploading..." : "Add Property"}
           </button>
-
         </form>
-
       </div>
     </div>
   );
